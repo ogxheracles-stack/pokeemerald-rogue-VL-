@@ -3601,6 +3601,10 @@ void Rogue_OnLoadMap(void)
         RogueHub_UpdateWarpStates();
         RogueHub_ApplyMapMetatiles();
     }
+
+    // *** VLUS HOOK: tick prime characters + relegation on every map load ***
+    Vlus_AdvancePrimeCharacters();
+    Vlus_HandleRelegationTick();
 }
 
 bool8 Rogue_ShouldSkipReloadMapTileView()
@@ -9627,4 +9631,21 @@ static void RandomiseBerryTrees(void)
 
     }
     RogueItemQuery_End();
+}
+// In Rogue_InitRunData or equivalent run-init function, add:
+void Vlus_InitSeasonData(void) {
+    // Seed from RTC + persistent counter for true randomness
+    gRogueSaveBlock->vlusSeason.seasonSeed = Rtc_GetRaw() ^ 
+        (gRogueSaveBlock->seasonCounter << 16);
+    
+    // Reset prime character VPs at season start
+    for (int i = 0; i < VLUS_PRIME_CHAR_COUNT; i++) {
+        gRogueSaveBlock->vlusSeason.primeCharVictoryPoints[i] = 0;
+    }
+}
+// Register as a script special by adding to the special table
+void VlusScript_PreRivalBattle(void) {
+    const u8 *matchSeed = (const u8 *)GetVarPointer(VAR_0x8000);
+    u8 primeCharId = (u8)VarGet(VAR_0x8001);
+    Vlus_PreRivalBattle(matchSeed, primeCharId);
 }

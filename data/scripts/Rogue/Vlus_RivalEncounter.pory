@@ -1,0 +1,86 @@
+// File: data/scripts/Rogue/Vlus_RivalEncounter.pory
+
+// Poryscript macro that a map tile's script can call
+script Vlus_RivalBattle_May {
+    // Store match seed and prime char ID into temp vars
+    bufferstring(VAR_0x8000, "0xFINALS_MAY_01")
+    setvar(VAR_0x8001, VLUS_PRIME_MAY)    // defined in constants
+    special(VlusScript_PreRivalBattle)
+    
+    // Now launch the trainer battle
+    // The trainer party gets built by hooking into Rogue_CreateTrainerParty
+    trainerbattle(TRAINER_BATTLE_SINGLE, 
+        sTrainerAIntroSpeech,   // will be overwritten by VLUS
+        sTrainerADefeatSpeech,
+        Vlus_AfterRivalBattle)
+}
+// File: data/scripts/Rogue/Vlus_RivalEncounter.pory
+// (Poryscript compiles into .inc)
+
+// Constants for VLUS prime character IDs
+#define VLUS_PRIME_WALLY   0
+#define VLUS_PRIME_MAY     1
+#define VLUS_PRIME_BRENDAN 2
+
+// Helper: display broadcast text from StringVar1, then taunt from StringVar2
+script Vlus_ShowBroadcastAndTaunt {
+    // gStringVar1 = broadcast, gStringVar2 = taunt
+    // Display broadcast first (longer text, deserves its own msgbox)
+    msgbox(gStringVar1, MSGBOX_DEFAULT)
+    closemessage
+    
+    // Brief pause for dramatic effect
+    delay(30)
+    
+    // Display taunt
+    msgbox(gStringVar2, MSGBOX_DEFAULT)
+    closemessage
+    
+    return
+}
+
+// Full rival encounter sequence
+script Vlus_FullRivalSequence {
+    lockall
+    playsound(SE_RG_CROWD)
+    
+    // --- Step 1: Generate the match data ---
+    // matchSeed in VAR_0x8000, primeCharId in VAR_0x8001
+    bufferstring(VAR_0x8000, "0xFINALS_MAY_01")  // example
+    setvar(VAR_0x8001, VLUS_PRIME_MAY)
+    special(VlusScript_PreRivalBattle)
+    
+    // --- Step 2: Prepare dynamic text ---
+    special(VlusScript_PrepareBroadcastText)
+    
+    // --- Step 3: Display Broadcast Desk commentary ---
+    call(Vlus_ShowBroadcastAndTaunt)
+    
+    // --- Step 4: Rival enters ---
+    applymovement(OBJ_EVENT_ID_PLAYER, Common_Movement_ExclamationMark)
+    waitmovement(0)
+    
+    // --- Step 5: Initiate the battle ---
+    trainerbattle(TRAINER_BATTLE_SINGLE,
+        0,              // IntroSpeech — set to 0; we already displayed it
+        0,              // DefeatSpeech — handled by after-battle script
+        Vlus_AfterRivalBattle)  // callback script
+    
+    // --- Step 6: Post-battle (handled by Vlus_AfterRivalBattle) ---
+    releaseall
+}
+
+// Post-battle script
+script Vlus_AfterRivalBattle {
+    lockall
+    
+    // Update prime character victory points
+    special(VlusScript_UpdatePrimeCharVP)
+    
+    // Display post-match commentary if desired
+    // ...
+    
+    // Restore map music and give control back
+    setvar(VAR_RESULT, 0)
+    releaseall
+}

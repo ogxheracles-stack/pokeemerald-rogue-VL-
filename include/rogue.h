@@ -1,6 +1,8 @@
 #ifndef GUARD_ROGUE_H
 #define GUARD_ROGUE_H
 
+#include "vlus_engine.h"
+
 // Extra data for pokemon in party
 struct RoguePartyMon
 {
@@ -286,6 +288,10 @@ struct RogueRunData
     bool8 isQuickSaveValid : 1;
     bool8 hasPendingRivalBattle : 1;
     bool8 rivalHasShiny : 1;
+    // *** VLUS ADDITIONS ***
+    u32 vlusMatchSeedHash;                    // hash of current match seed
+    u16 vlusPrimeCharVictoryPoints[VLUS_PRIME_CHAR_COUNT]; // snapshot at adventure start
+    u8 vlusRivalEncounterCount;               // times player has fought a rival this run
 };
 
 struct RogueHubArea
@@ -667,6 +673,8 @@ struct RogueSaveBlock
     struct RogueDifficultyConfig difficultyConfig;
     u16 timeOfDayMinutes;
     u8 seasonCounter;
+    // *** VLUS ADDITION ***
+    struct VlusSeasonData vlusSeason;  // deterministic esports season data
 };
 
 struct RogueSpeciesBakedData

@@ -1934,6 +1934,12 @@ static bool8 ShouldTrainerUseValidTeraTypes(u16 trainerNum)
 
 u8 Rogue_CreateTrainerParty(u16 trainerNum, struct Pokemon* party, u8 monCapacity, bool8 firstTrainer)
 {
+    // *** VLUS HOOK ***
+    if (gRogueRun.vlusRivalEncounterCount > 0 && 
+        Rogue_IsRivalTrainer(trainerNum)) {
+        return Vlus_CreateDeterministicParty(trainerNum, party, monCapacity);
+    }
+
     u8 monCount;
 
     if(Rogue_IsRivalTrainer(trainerNum))
