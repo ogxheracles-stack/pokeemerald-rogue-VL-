@@ -2,9 +2,9 @@ name: Victory League Alpha Build
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, vanilla ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, vanilla ]
   workflow_dispatch:
 
 jobs:
@@ -46,5 +46,5 @@ jobs:
       - name: Upload ROM artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rogue.gba
+          name: Victory-League-Alpha-2.4
           path: rogue.gba
