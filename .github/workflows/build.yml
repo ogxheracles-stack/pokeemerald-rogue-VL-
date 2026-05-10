@@ -5,21 +5,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git libpng-dev
+          sudo apt-get install -y build-essential git libpng-dev gcc-arm-none-eabi binutils-arm-none-eabi
+
       - name: Install AGBCC
         run: |
           git clone https://github.com/pret/agbcc
           cd agbcc
           ./build.sh
           ./install.sh ../
+
       - name: Build ROM
         run: make -j$(nproc)
+
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Victory-League-Alpha-2.4
           path: rogue.gba
