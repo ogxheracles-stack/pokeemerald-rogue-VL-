@@ -22,11 +22,11 @@ jobs:
       - name: Install poryscript
         run: |
           mkdir -p /tmp/poryscript
-          # Download the ZIP instead of the raw file
           wget -q https://github.com/huderlem/poryscript/releases/latest/download/poryscript-linux.zip -O /tmp/poryscript.zip
           unzip /tmp/poryscript.zip -d /tmp/poryscript
-          chmod +x /tmp/poryscript/poryscript
-          sudo mv /tmp/poryscript/poryscript /usr/local/bin/poryscript
+          # Update: Reaching into the 'poryscript-linux' subfolder
+          chmod +x /tmp/poryscript/poryscript-linux/poryscript
+          sudo mv /tmp/poryscript/poryscript-linux/poryscript /usr/local/bin/poryscript
           poryscript --version
 
       - name: Clone and install agbcc
