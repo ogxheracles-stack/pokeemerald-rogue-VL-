@@ -1,0 +1,25 @@
+name: VL-Omni-Builder
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git libpng-dev
+      - name: Install AGBCC
+        run: |
+          git clone https://github.com/pret/agbcc
+          cd agbcc
+          ./build.sh
+          ./install.sh ../
+      - name: Build ROM
+        run: make -j$(nproc)
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Victory-League-Alpha-2.4
+          path: rogue.gba
