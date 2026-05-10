@@ -1,29 +1,50 @@
-name: VL-Omni-Builder
-on: [push]
+name: Victory League Alpha Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
 jobs:
-  build:
+  build-rom:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git libpng-dev gcc-arm-none-eabi binutils-arm-none-eabi
+          sudo apt-get install -y build-essential binutils-arm-none-eabi gcc-arm-none-eabi libpng-dev wget git make
 
-      - name: Install AGBCC
+      - name: Install poryscript
         run: |
-          git clone https://github.com/pret/agbcc
-          cd agbcc
+          mkdir -p /tmp/poryscript
+          wget -q https://github.com/huderlem/poryscript/releases/latest/download/poryscript-linux -O /tmp/poryscript/poryscript
+          chmod +x /tmp/poryscript/poryscript
+          sudo mv /tmp/poryscript/poryscript /usr/local/bin/poryscript
+          poryscript --version
+
+      - name: Clone and install agbcc
+        run: |
+          git clone https://github.com/pret/agbcc.git /tmp/agbcc
+          cd /tmp/agbcc
           ./build.sh
-          ./install.sh ../
+          ./install.sh $GITHUB_WORKSPACE
+          cd $GITHUB_WORKSPACE
+
+      - name: Build native tools
+        run: |
+          make -C tools -j$(nproc)
 
       - name: Build ROM
-        run: make -j$(nproc)
+        run: |
+          make -j$(nproc) rogue.gba
 
-      - name: Upload Artifact
+      - name: Upload ROM artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Victory-League-Alpha-2.4
+          name: rogue.gba
           path: rogue.gba
