@@ -17,12 +17,14 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential binutils-arm-none-eabi gcc-arm-none-eabi libpng-dev wget git make
+          sudo apt-get install -y build-essential binutils-arm-none-eabi gcc-arm-none-eabi libpng-dev wget git make unzip
 
       - name: Install poryscript
         run: |
           mkdir -p /tmp/poryscript
-          wget -q https://github.com/huderlem/poryscript/releases/latest/download/poryscript-linux -O /tmp/poryscript/poryscript
+          # Download the ZIP instead of the raw file
+          wget -q https://github.com/huderlem/poryscript/releases/latest/download/poryscript-linux.zip -O /tmp/poryscript.zip
+          unzip /tmp/poryscript.zip -d /tmp/poryscript
           chmod +x /tmp/poryscript/poryscript
           sudo mv /tmp/poryscript/poryscript /usr/local/bin/poryscript
           poryscript --version
