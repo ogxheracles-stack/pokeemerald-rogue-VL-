@@ -38,14 +38,14 @@ jobs:
 
       - name: Build native tools
         run: |
-          make -C tools -j$(nproc)
+          make tools -j$(nproc)
 
       - name: Build ROM
         run: |
-          make -j$(nproc) rogue.gba
+          make -j$(nproc)
 
       - name: Upload ROM artifact
         uses: actions/upload-artifact@v4
         with:
           name: Victory-League-Alpha-2.4
-          path: rogue.gba
+          path: "*.gba"
