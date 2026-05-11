@@ -19,12 +19,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential binutils-arm-none-eabi gcc-arm-none-eabi libpng-dev wget git make unzip
 
-      - name: Install poryscript (local path)
+      - name: Install poryscript & config
         run: |
-          mkdir -p tools/poryscript
+          mkdir -p tools/poryscript/poryscript-linux
           wget -q https://github.com/huderlem/poryscript/releases/latest/download/poryscript-linux.zip -O /tmp/poryscript.zip
-          unzip /tmp/poryscript.zip -d tools/poryscript
+          unzip -o /tmp/poryscript.zip -d /tmp/poryscript_extract
+          
+          # Move the translator binary to the exact spot the Makefile expects
+          cp /tmp/poryscript_extract/poryscript-linux/poryscript tools/poryscript/poryscript-linux/poryscript
           chmod +x tools/poryscript/poryscript-linux/poryscript
+          
+          # THE FIX: Move the "dictionary" to the main root folder
+          cp /tmp/poryscript_extract/poryscript-linux/command_config.json .
+          
           sudo ln -sf $GITHUB_WORKSPACE/tools/poryscript/poryscript-linux/poryscript /usr/local/bin/poryscript
 
       - name: Clone and install agbcc
