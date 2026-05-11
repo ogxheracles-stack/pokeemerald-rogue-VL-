@@ -19,14 +19,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential binutils-arm-none-eabi gcc-arm-none-eabi libpng-dev wget git make unzip
 
-      - name: Install poryscript
+      - name: Install poryscript (local path)
         run: |
-          mkdir -p /tmp/poryscript
+          mkdir -p tools/poryscript
           wget -q https://github.com/huderlem/poryscript/releases/latest/download/poryscript-linux.zip -O /tmp/poryscript.zip
-          unzip /tmp/poryscript.zip -d /tmp/poryscript
-          chmod +x /tmp/poryscript/poryscript-linux/poryscript
-          sudo mv /tmp/poryscript/poryscript-linux/poryscript /usr/local/bin/poryscript
-          poryscript -v
+          unzip /tmp/poryscript.zip -d tools/poryscript
+          chmod +x tools/poryscript/poryscript-linux/poryscript
+          sudo ln -sf $GITHUB_WORKSPACE/tools/poryscript/poryscript-linux/poryscript /usr/local/bin/poryscript
 
       - name: Clone and install agbcc
         run: |
