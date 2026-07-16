@@ -2,6 +2,7 @@
 #include "main.h"
 #include "string_util.h"
 #include "rogue.h"
+#include "rogue_controller.h"
 #include "vlus_engine.h"
 
 void Vlus_PreRivalBattle(const u8 *matchSeed, u8 primeCharId) {

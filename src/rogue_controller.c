@@ -3603,8 +3603,11 @@ void Rogue_OnLoadMap(void)
     }
 
     // *** VLUS HOOK: tick prime characters + relegation on every map load ***
-    Vlus_AdvancePrimeCharacters();
-    Vlus_HandleRelegationTick();
+    if (Rogue_IsRunActive())
+    {
+        Vlus_AdvancePrimeCharacters();
+        Vlus_HandleRelegationTick();
+    }
 }
 
 bool8 Rogue_ShouldSkipReloadMapTileView()
